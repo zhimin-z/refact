@@ -126,7 +126,7 @@ The Refact agent is a sophisticated autonomous software development agent that c
 - **Workflow**: Iterative action-observation-refinement cycles
 - **Planning**: Hierarchical decomposition with interactive human approval and replanning capabilities
 - **Reasoning**: Multi-modal reasoning including chain-of-thought, ReAct, tool composition, and program-aided techniques
-- **Memory**: Multi-tiered system combining ephemeral session context, persistent storage, episodic memory, and vector database for semantic retrieval
+- **Memory**: Multi-tiered system combining ephemeral session context, persistent storage, episodic memory, semantic knowledge graphs, procedural know-how, and vector database for similarity-based retrieval
 - **Tools**: Comprehensive toolset spanning 12 categories from file management to debugging, databases, and containerization
 
 This classification demonstrates that Refact is a full-featured autonomous agent designed for end-to-end software engineering tasks with sophisticated cognitive capabilities, flexible planning, and extensive environmental interaction through diverse tool integrations.
