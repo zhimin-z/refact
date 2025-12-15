@@ -60,7 +60,7 @@ The Refact agent employs multiple reasoning techniques:
 
 ## Agent Memory
 
-**Labels:** EPHEMERAL, PERSISTENT, EPISODIC, VECTOR-DB, MULTI-TIERED
+**Labels:** EPHEMERAL, PERSISTENT, EPISODIC, VECTOR-DB, MULTI-TIERED, SEMANTIC, PROCEDURAL
 
 **Justification:**
 
@@ -76,39 +76,45 @@ The Refact agent implements a sophisticated multi-layered memory system:
 
 5. **MULTI-TIERED**: The system manages different memory tiers - immediate session context (ephemeral working memory), vector database for fast semantic retrieval, and persistent SQLite storage for long-term knowledge. The AST indexer thread maintains separate structural indexes for code understanding.
 
+6. **SEMANTIC**: The knowledge tools (`tool_knowledge.rs`, `tool_create_knowledge.rs`, `tool_create_memory_bank.rs`) implement semantic knowledge storage and retrieval. The `knowledge` tool "fetches successful trajectories" using "vector similarity search" based on semantic search keys. The system stores structured conceptual knowledge about tools, project components, objectives, and frameworks, enabling sophisticated reasoning about relationships.
+
+7. **PROCEDURAL**: The knowledge system stores and retrieves "successful trajectories to help you accomplish your task" as documented in the `knowledge` tool description. This represents operational expertise - how-to knowledge about successfully completing specific types of tasks, which can be recalled and applied to similar future tasks.
+
 ---
 
 ## Agent Tools
 
-**Labels:** FILE-MANAGEMENT, CODE-EDITING, STRUCTURAL-RETRIEVAL, EMBEDDING-RETRIEVAL, VERSION-CONTROL, PYTHON-TOOLS, TESTING-TOOLS, DATABASE-TOOLS, SYSTEM-UTILITIES, SHELL-SCRIPTING, WEB-TOOLS, DEBUGGING-TOOLS, CONTAINER-TOOLS
+**Labels:** FILE-MANAGEMENT, CODE-EDITING, STRUCTURAL-RETRIEVAL, EMBEDDING-RETRIEVAL, VERSION-CONTROL, PYTHON-TOOLS, DATABASE-TOOLS, SYSTEM-UTILITIES, SHELL-SCRIPTING, WEB-TOOLS, DEBUGGING-TOOLS, CONTAINER-TOOLS
+
+**Additional Note:** The agent also supports **Model Context Protocol (MCP)** integration, which enables connection to external MCP servers to extend tool capabilities dynamically. MCP servers can be configured via stdio or SSE protocols as documented in `integrations/mcp/` and `docs/features/autonomous-agent/integrations/mcp.md`.
 
 **Justification:**
 
 The Refact agent provides extensive tool capabilities across multiple categories:
 
-1. **FILE-MANAGEMENT**: Basic file operations through tools like `cat` (read files), `tree` (directory structure), `rm` (delete), `mv` (move/rename) as implemented in the tools directory.
+1. **FILE-MANAGEMENT**: Basic file operations through tools like `cat` (read files), `tree` (directory structure), `rm` (delete), `mv` (move/rename) as implemented in the tools directory (`tools_list.rs` lines 84-101).
 
-2. **CODE-EDITING**: Specialized code modification through the `patch` tool and file_edit module (`tool_create_textdoc.rs`, `tool_update_textdoc.rs`, `tool_update_textdoc_regex.rs`) for precise code modifications.
+2. **CODE-EDITING**: Specialized code modification through file_edit module tools including `ToolCreateTextDoc`, `ToolUpdateTextDoc`, and `ToolUpdateTextDocByLines` for precise code modifications (`tools_list.rs` lines 94-101).
 
-3. **STRUCTURAL-RETRIEVAL**: Advanced AST-based code comprehension through `definition` (symbol definitions) and `references` (symbol usages) tools as described in tools.md. The AST module supports Java, JavaScript, TypeScript, Python, and Rust with syntax-aware search capabilities.
+3. **STRUCTURAL-RETRIEVAL**: Advanced AST-based code comprehension through `definition` tool (`ToolAstDefinition`) for symbol definitions as shown in tools.md. The AST module supports Java, JavaScript, TypeScript, Python, and Rust with syntax-aware search capabilities.
 
-4. **EMBEDDING-RETRIEVAL**: Vector database semantic search through the `search` tool, using embeddings to find similar code patterns as documented in tools.md.
+4. **EMBEDDING-RETRIEVAL**: Vector database semantic search through the `search` tool (`ToolSearch`), using embeddings to find similar code patterns as documented in tools.md and implemented via the vecdb module.
 
-5. **VERSION-CONTROL**: Git integration through the integr_github.rs and integr_gitlab.rs modules, with experimental GitHub CLI (`gh` command) support as noted in INTEGRATIONS.md.
+5. **VERSION-CONTROL**: Git integration through `integr_github.rs` and `integr_gitlab.rs` modules, with experimental GitHub CLI (`gh` command) support as noted in INTEGRATIONS.md.
 
 6. **PYTHON-TOOLS**: Python debugger integration through `integr_pdb.rs` for runtime debugging capabilities (marked experimental in README.md).
 
 7. **DATABASE-TOOLS**: MySQL and PostgreSQL integrations (`integr_mysql.rs`, `integr_postgres.rs`) for database operations as documented in the integrations directory.
 
-8. **SYSTEM-UTILITIES**: Shell command execution through `integr_shell.rs` and command-line service integration (`integr_cmdline_service.rs`).
+8. **SYSTEM-UTILITIES**: Shell command execution through `integr_shell.rs` and command-line service integration (`integr_cmdline_service.rs`), providing access to process control and system operations.
 
-9. **SHELL-SCRIPTING**: Full shell command support through the shell integration, allowing execution of arbitrary bash commands.
+9. **SHELL-SCRIPTING**: Full shell command support through the shell integration, allowing execution of arbitrary bash commands and scripts for automation.
 
-10. **WEB-TOOLS**: Web page fetching through the `web` tool (`tool_web.rs`) for reading documentation and online resources, plus Chrome browser integration (`integr_chrome.rs`).
+10. **WEB-TOOLS**: Web page fetching through the `web` tool (`ToolWeb` in `tool_web.rs`) for reading documentation and online resources, plus Chrome browser integration (`integr_chrome.rs`) for advanced web interaction.
 
-11. **DEBUGGING-TOOLS**: Python debugger (pdb) integration for interactive debugging sessions.
+11. **DEBUGGING-TOOLS**: Python debugger (pdb) integration through `integr_pdb.rs` for interactive debugging sessions and runtime introspection.
 
-12. **CONTAINER-TOOLS**: Docker integration (experimental) through the `docker` subdirectory in integrations, enabling container management.
+12. **CONTAINER-TOOLS**: Docker integration (experimental) through the `docker` subdirectory in integrations, enabling container management and orchestration.
 
 ---
 
@@ -121,6 +127,6 @@ The Refact agent is a sophisticated autonomous software development agent that c
 - **Planning**: Hierarchical decomposition with interactive human approval and replanning capabilities
 - **Reasoning**: Multi-modal reasoning including chain-of-thought, ReAct, tool composition, and program-aided techniques
 - **Memory**: Multi-tiered system combining ephemeral session context, persistent storage, episodic memory, and vector database for semantic retrieval
-- **Tools**: Comprehensive toolset spanning 13+ categories from file management to debugging, databases, and containerization
+- **Tools**: Comprehensive toolset spanning 12 categories from file management to debugging, databases, and containerization
 
 This classification demonstrates that Refact is a full-featured autonomous agent designed for end-to-end software engineering tasks with sophisticated cognitive capabilities, flexible planning, and extensive environmental interaction through diverse tool integrations.
